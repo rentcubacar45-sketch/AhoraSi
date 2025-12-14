@@ -18,8 +18,18 @@ from ProxyCloud import ProxyCloud
 import ProxyCloud
 import socket
 import S5Crypto
+import threading
+from flask import Flask
 
+app_web = Flask(__name__)
 
+@app_web.route('/')
+def health():
+    return 'OK'
+
+def run_web():
+    port = int(os.environ.get('PORT', 5000))
+    app_web.run(host='0.0.0.0', port=port)
 
 def downloadFile(downloader,filename,currentBits,totalBits,speed,time,args):
     try:
@@ -412,6 +422,9 @@ def main():
     bot_token = '8476706727:AAEVlArs-XKY6elCYe9XRbNyhoyFvNdNI5I'
     api_id = '20534584'
     api_hash = '6d5b13261d2c92a9a00afc1fd613b9df'
+
+    # Start web server in a thread
+    threading.Thread(target=run_web).start()
 
     app = Client("tguploaderpro", api_id=api_id, api_hash=api_hash, bot_token=bot_token)
     @app.on_message(filters.text)

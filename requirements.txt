@@ -6,3 +6,4 @@ yt-dlp
 requests_toolbelt
 pyrogram
 tgcrypto
+flask
