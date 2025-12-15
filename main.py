@@ -13,6 +13,7 @@ import mediafire
 import datetime
 import time
 import youtube
+import megacli
 
 from pydownloader.downloader import Downloader
 from ProxyCloud import ProxyCloud
@@ -406,11 +407,14 @@ async def onmessage(message, bot):
             start_msg = 'Bot          : CarlosBOtfix\n'
             start_msg+= 'Desarrollador: @Nanatsu2370\n'
             start_msg+= '\n'
-            start_msg+= 'Uso          :Envia Enlaces De Descarga y Archivos Para Procesar (Configure Antes De Empezar , Vea El /tutorial)\n'
+            start_msg+= 'Uso          :Envia Enlaces De Descar(Configure Antes De Empezar , Vea El /tutorial)\n'
             await progress_message.edit_text(start_msg)
         elif 'http' in msgText:
             url = msgText
-            await ddl(message,bot,progress_message,url,file_name='',thread=thread,jdb=jdb)
+            try:
+                await ddl(message,bot,progress_message,url,file_name='',thread=thread,jdb=jdb)
+            except Exception as ex:
+                await progress_message.edit_text('❌Error interno❌')
         else:
             await message.edit_text('😵No se pudo procesar😵')
     except Exception as ex:

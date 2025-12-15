@@ -50,7 +50,11 @@ class Downloader(object):
                     url = info['file_url']
                 except:return None
         if req is None:
-           req = requests.get(url,allow_redirects=True,stream=True)
+           try:
+               req = requests.get(url,allow_redirects=True,stream=True,timeout=30)
+           except requests.RequestException as e:
+               print(f"Error downloading {url}: {e}")
+               return None
         return self._process_download(url,req,progressfunc=progressfunc,args=args)
 
     def _process_mega_download(self,megaurl,progressfunc,args):
