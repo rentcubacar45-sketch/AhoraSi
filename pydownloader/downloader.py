@@ -51,7 +51,10 @@ class Downloader(object):
                 except:return None
         if req is None:
            try:
-               req = requests.get(url,allow_redirects=True,stream=True,timeout=30)
+               headers = {
+                   'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+               }
+               req = requests.get(url,allow_redirects=True,stream=True,timeout=30, headers=headers)
            except requests.RequestException as e:
                print(f"Error downloading {url}: {e}")
                return None

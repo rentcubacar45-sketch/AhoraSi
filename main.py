@@ -141,7 +141,7 @@ async def ddl(update,bot,message,url,file_name='',thread=None,jdb=None):
         if file:
             await processFile(update,bot,message,file,jdb=jdb)
         else:
-            await megadl(update,bot,message,url,file_name,thread,jdb=jdb)
+            await message.edit_text('❌Error al descargar el enlace❌')
 
 async def megadl(update,bot,message,megaurl,file_name='',thread=None,jdb=None):
     megadl = megacli.mega.Mega({'verbose': True})
