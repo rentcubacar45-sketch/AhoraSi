@@ -417,14 +417,9 @@ async def onmessage(message, bot):
 
 
 def main():
-    bot_token = os.environ.get('bot_token')
-    api_id = os.environ.get('api_id')
-    api_hash = os.environ.get('api_hash')
-
-    #decomentar abajo y modificar solo si se va a poner el token del bot manual
-    bot_token = '8476706727:AAEVlArs-XKY6elCYe9XRbNyhoyFvNdNI5I'
-    api_id = '20534584'
-    api_hash = '6d5b13261d2c92a9a00afc1fd613b9df'
+    bot_token = os.environ.get('BOT_TOKEN') or '8476706727:AAEVlArs-XKY6elCYe9XRbNyhoyFvNdNI5I'
+    api_id = os.environ.get('API_ID') or '20534584'
+    api_hash = os.environ.get('API_HASH') or '6d5b13261d2c92a9a00afc1fd613b9df'
 
     # Start web server in a thread
     threading.Thread(target=run_web).start()

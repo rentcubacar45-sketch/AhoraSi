@@ -7,3 +7,4 @@ requests_toolbelt
 pyrogram
 tgcrypto
 flask
+validators
