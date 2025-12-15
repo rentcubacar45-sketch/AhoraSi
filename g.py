@@ -23,11 +23,6 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 # Disable warnings for unverified HTTPS requests
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-# Define the SOCKS5 proxy
-PROXY = {
-    'http': 'socks5h://carlos:659874@152.206.139.83:6046',
-    'https': 'socks5h://carlos:659874@152.206.139.83:6046'
-}
 
 class UnifiedUploader:
     """Unified uploader class for Moodle, OJS, and Next platforms."""
@@ -54,10 +49,13 @@ class UnifiedUploader:
         self.repo_id = repo_id  # Se acepta para todas las plataformas, pero se ignora en Next
         self.path = path
         self.file_path = file_path
-        self.proxy = proxy if proxy else PROXY  # Use provided proxy or module-level proxy
+        self.proxy = proxy
         self.max_file_size_mb = max_file_size_mb
         self.session = requests.Session()
-        self.session.proxies = self.proxy  # Set proxy for the session
+        if self.proxy:
+            self.session.proxies = self.proxy.as_dict_proxy()  # Set proxy for the session
+        else:
+            self.session.proxies = {}  # No proxy
         self.userdata = None
         self.userid = ''
         self.sesskey = ''

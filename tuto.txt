@@ -1,0 +1,36 @@
+Tutorial para TGUploaderPro v7.0
+
+Bienvenido al bot TGUploaderPro. Este bot te permite subir archivos a plataformas como Moodle, NextCloud, etc., descargando primero desde URLs.
+
+Comandos principales:
+/start - Inicia el bot y muestra información.
+/tutorial - Muestra este tutorial.
+/myuser - Muestra tu configuración actual.
+/zips <tamaño> - Establece el tamaño máximo de los zips en MB (ej: /zips 100).
+/account <usuario> <contraseña> - Configura tu cuenta Moodle (ej: /account miuser mipass).
+/host <url> - Establece la URL del host Moodle (ej: /host https://moodle.ejemplo.com).
+/repoid <id> - Establece el ID del repositorio Moodle (ej: /repoid 4).
+/tokenize_on - Activa el uso de tokens en URLs.
+/tokenize_off - Desactiva el uso de tokens.
+/cloud <tipo> - Establece el tipo de nube: moodle o cloud (NextCloud).
+/uptype <tipo> - Establece el tipo de subida: evidence, draft, blog.
+/proxy <proxy> - Establece el proxy. Formato: tipo://[usuario:contraseña@]ip:puerto
+  Soporta proxies sin autenticación y con autenticación.
+  Ejemplos:
+  - Sin auth: /proxy socks5://192.168.1.1:8080
+  - Con auth: /proxy socks5://user:pass@192.168.1.1:8080
+  - HTTP proxy: /proxy http://proxy.ejemplo.com:3128
+  Para quitar proxy: /proxy (sin argumentos)
+/cancel_ <id> - Cancela una tarea en progreso (el ID se muestra en el progreso).
+
+Uso:
+1. Configura tu cuenta con /account, /host, /repoid, /cloud.
+2. Envía una URL de descarga (http/https) y el bot la procesará, subirá a la nube y te dará el enlace.
+3. Para archivos locales, envíalos directamente (pero el código parece enfocado en URLs).
+
+Notas:
+- Asegúrate de tener permisos de admin para /adduser, /banuser, /getdb.
+- Los proxies deben estar encriptados para seguridad.
+- Si hay errores, verifica tu configuración.
+
+Para soporte: @obisoftdevel

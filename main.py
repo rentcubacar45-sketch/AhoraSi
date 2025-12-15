@@ -62,7 +62,8 @@ async def processUploadFiles(filename,filesize,files,update,bot,message,thread=N
         await message.edit_text('🤜Preparando Para Subir☁...')
         user_info = jdb.get_user(message.from_user.username if message.from_user else str(message.from_user.id))
         cloudtype = user_info['cloudtype']
-        proxy = ProxyCloud.parse(user_info['proxy'])
+        proxy_str = user_info['proxy']
+        proxy = ProxyCloud.parse(proxy_str) if proxy_str else None
         tokenize = False
         if user_info['tokenize'] != 0:
             tokenize = True

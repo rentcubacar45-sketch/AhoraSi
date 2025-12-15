@@ -1,25 +1,41 @@
 class ProxyCloud(object):
-    def __init__(self, ip,port,type='socks5'):
+    def __init__(self, ip, port, type='socks5', user=None, password=None):
         self.ip = ip
         self.port = port
+        self.user = user
+        self.password = password
         self.default = None
         self.type = type
     def set_default (self,socket):
         self.default = socket
     def as_dict_proxy(self):
-        return {'http':f'{self.type}://'+self.ip+':'+str(self.port)+'',
-                'https':f'{self.type}://'+self.ip+':'+str(self.port)+''}
+        if self.user and self.password:
+            auth = f'{self.user}:{self.password}@'
+        else:
+            auth = ''
+        proxy_url = f'{self.type}://{auth}{self.ip}:{str(self.port)}'
+        return {'http': proxy_url, 'https': proxy_url}
 
-import S5Crypto
 def parse(text):
     try:
-        tokens = str(text).split('://')
+        if '://' not in text:
+            return None
+        tokens = str(text).split('://', 1)
         type = tokens[0]
-        proxy_tokens = S5Crypto.decrypt(str(tokens[1])).split(':')
-        ip = proxy_tokens[0]
-        port = int(proxy_tokens[1])
-        return ProxyCloud(ip,port,type)
-    except:pass
+        rest = tokens[1]
+        # Check for auth
+        if '@' in rest:
+            auth, ip_port = rest.rsplit('@', 1)
+            user, password = auth.split(':', 1)
+        else:
+            user = None
+            password = None
+            ip_port = rest
+        ip, port = ip_port.split(':', 1)
+        port = int(port)
+        return ProxyCloud(ip, port, type, user, password)
+    except:
+        pass
     return None
 
 
