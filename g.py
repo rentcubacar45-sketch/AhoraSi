@@ -20,7 +20,7 @@ from urllib.parse import quote, quote_plus
 from random import randint
 import mimetypes
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
-# Disable warnings for unverified HTTPS requests
+# Disable
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 
