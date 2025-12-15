@@ -2,6 +2,7 @@ import asyncio
 from pyrogram import Client, filters
 from g import UnifiedUploader
 from pyobigram.utils import sizeof_fmt,get_file_size,createID,nice_time
+from pyobigram.threads import ObigramThread as SimpleThread
 
 from SQLiteDatabase import SQLiteDatabase
 import zipfile
@@ -22,6 +23,8 @@ import threading
 from flask import Flask
 
 app_web = Flask(__name__)
+
+threads = {}
 
 @app_web.route('/')
 def health():
@@ -85,10 +88,10 @@ async def processUploadFiles(filename,filesize,files,update,bot,message,thread=N
             client.logout()
             return draftlist
         else:
-            bot.editMessageText(message, '❌Error En La Pagina❌')
+            await message.edit_text('❌Error En La Pagina❌')
             return None
     except Exception as ex:
-        bot.editMessageText(message, '❌Error❌\n' + str(ex))
+        await message.edit_text('❌Error❌\n' + str(ex))
         return None
 
 
@@ -167,7 +170,7 @@ async def sendTxt(name,files,update,bot):
                     txt.write(f['directurl']+separator)
                     fi += 1
                 txt.close()
-                await bot.send_document(update.chat.id,name)
+                await bot.send_document(update.message.chat.id,name)
                 os.unlink(name)
 
 async def onmessage(message, bot):
@@ -221,38 +224,38 @@ async def onmessage(message, bot):
                 try:
                     user = str(msgText).split(' ')[1]
                     if user == username:
-                        bot.sendMessage(update.message.chat.id,'❌No Se Puede Banear Usted❌')
+                        await bot.send_message(message.chat.id,'❌No Se Puede Banear Usted❌')
                         return
                     jdb.remove(user)
                     jdb.save()
                     msg = '🦶Fuera @'+user+' Baneado❌'
-                    bot.sendMessage(update.message.chat.id,msg)
+                    await bot.send_message(message.chat.id,msg)
                 except:
-                    bot.sendMessage(update.message.chat.id,'❌Error en el comando /banuser username❌')
+                    await bot.send_message(message.chat.id,'❌Error en el comando /banuser username❌')
             else:
-                bot.sendMessage(update.message.chat.id,'❌No Tiene Permiso❌')
+                await bot.send_message(message.chat.id,'❌No Tiene Permiso❌')
             return
         if '/getdb' in msgText:
             isadmin = jdb.is_admin(username)
             if isadmin:
-                bot.sendMessage(update.message.chat.id,'Base De Datos👇')
-                bot.sendFile(update.message.chat.id,'database.db')
+                await bot.send_message(message.chat.id,'Base De Datos👇')
+                await bot.send_document(message.chat.id,'database.db')
             else:
-                bot.sendMessage(update.message.chat.id,'❌No Tiene Permiso❌')
+                await bot.send_message(message.chat.id,'❌No Tiene Permiso❌')
             return
         # end
 
         # comandos de usuario
         if '/tutorial' in msgText:
             tuto = open('tuto.txt','r')
-            bot.sendMessage(update.message.chat.id,tuto.read())
+            await bot.send_message(message.chat.id,tuto.read())
             tuto.close()
             return
         if '/myuser' in msgText:
             getUser = user_info
             if getUser:
                 statInfo = infos.createStat(username,getUser,jdb.is_admin(username))
-                bot.sendMessage(update.message.chat.id,statInfo)
+                await bot.send_message(message.chat.id,statInfo)
                 return
         if '/zips' in msgText:
             getUser = user_info
@@ -263,9 +266,9 @@ async def onmessage(message, bot):
                    jdb.save_data_user(username,getUser)
                    jdb.save()
                    msg = '😃Genial los zips seran de '+ sizeof_fmt(size*1024*1024)+' las partes👍'
-                   bot.sendMessage(update.message.chat.id,msg)
+                   await bot.send_message(message.chat.id,msg)
                 except:
-                   bot.sendMessage(update.message.chat.id,'❌Error en el comando /zips size❌')
+                   await bot.send_message(message.chat.id,'❌Error en el comando /zips size❌')
                 return
         if '/account' in msgText:
             try:
@@ -279,9 +282,9 @@ async def onmessage(message, bot):
                     jdb.save_data_user(username,getUser)
                     jdb.save()
                     statInfo = infos.createStat(username,getUser,jdb.is_admin(username))
-                    bot.sendMessage(update.message.chat.id,statInfo)
+                    await bot.send_message(message.chat.id,statInfo)
             except:
-                bot.sendMessage(update.message.chat.id,'❌Error en el comando /account user,password❌')
+                await bot.send_message(message.chat.id,'❌Error en el comando /account user,password❌')
             return
         if '/host' in msgText:
             try:
@@ -293,9 +296,9 @@ async def onmessage(message, bot):
                     jdb.save_data_user(username,getUser)
                     jdb.save()
                     statInfo = infos.createStat(username,getUser,jdb.is_admin(username))
-                    bot.sendMessage(update.message.chat.id,statInfo)
+                    await bot.send_message(message.chat.id,statInfo)
             except:
-                bot.sendMessage(update.message.chat.id,'❌Error en el comando /host moodlehost❌')
+                await bot.send_message(message.chat.id,'❌Error en el comando /host moodlehost❌')
             return
         if '/repoid' in msgText:
             try:
@@ -307,9 +310,9 @@ async def onmessage(message, bot):
                     jdb.save_data_user(username,getUser)
                     jdb.save()
                     statInfo = infos.createStat(username,getUser,jdb.is_admin(username))
-                    bot.sendMessage(update.message.chat.id,statInfo)
+                    await bot.send_message(message.chat.id,statInfo)
             except:
-                bot.sendMessage(update.message.chat.id,'❌Error en el comando /repo id❌')
+                await bot.send_message(message.chat.id,'❌Error en el comando /repo id❌')
             return
         if '/tokenize_on' in msgText:
             try:
@@ -319,9 +322,9 @@ async def onmessage(message, bot):
                     jdb.save_data_user(username,getUser)
                     jdb.save()
                     statInfo = infos.createStat(username,getUser,jdb.is_admin(username))
-                    bot.sendMessage(update.message.chat.id,statInfo)
+                    await bot.send_message(message.chat.id,statInfo)
             except:
-                bot.sendMessage(update.message.chat.id,'❌Error en el comando /tokenize state❌')
+                await bot.send_message(message.chat.id,'❌Error en el comando /tokenize state❌')
             return
         if '/tokenize_off' in msgText:
             try:
@@ -331,9 +334,9 @@ async def onmessage(message, bot):
                     jdb.save_data_user(username,getUser)
                     jdb.save()
                     statInfo = infos.createStat(username,getUser,jdb.is_admin(username))
-                    bot.sendMessage(update.message.chat.id,statInfo)
+                    await bot.send_message(message.chat.id,statInfo)
             except:
-                bot.sendMessage(update.message.chat.id,'❌Error en el comando /tokenize state❌')
+                await bot.send_message(message.chat.id,'❌Error en el comando /tokenize state❌')
             return
         if '/cloud' in msgText:
             try:
@@ -345,9 +348,9 @@ async def onmessage(message, bot):
                     jdb.save_data_user(username,getUser)
                     jdb.save()
                     statInfo = infos.createStat(username,getUser,jdb.is_admin(username))
-                    bot.sendMessage(update.message.chat.id,statInfo)
+                    await bot.send_message(message.chat.id,statInfo)
             except:
-                bot.sendMessage(update.message.chat.id,'❌Error en el comando /cloud (moodle or cloud)❌')
+                await bot.send_message(message.chat.id,'❌Error en el comando /cloud (moodle or cloud)❌')
             return
         if '/uptype' in msgText:
             try:
@@ -359,9 +362,9 @@ async def onmessage(message, bot):
                     jdb.save_data_user(username,getUser)
                     jdb.save()
                     statInfo = infos.createStat(username,getUser,jdb.is_admin(username))
-                    bot.sendMessage(update.message.chat.id,statInfo)
+                    await bot.send_message(message.chat.id,statInfo)
             except:
-                bot.sendMessage(update.message.chat.id,'❌Error en el comando /uptype (typo de subida (evidence,draft,blog))❌')
+                await bot.send_message(message.chat.id,'❌Error en el comando /uptype (typo de subida (evidence,draft,blog))❌')
             return
         if '/proxy' in msgText:
             try:
@@ -373,12 +376,12 @@ async def onmessage(message, bot):
                     jdb.save_data_user(username,getUser)
                     jdb.save()
                     statInfo = infos.createStat(username,getUser,jdb.is_admin(username))
-                    bot.sendMessage(update.message.chat.id,statInfo)
+                    await bot.send_message(message.chat.id,statInfo)
             except:
                 if user_info:
                     user_info['proxy'] = ''
                     statInfo = infos.createStat(username,user_info,jdb.is_admin(username))
-                    bot.sendMessage(update.message.chat.id,statInfo)
+                    await bot.send_message(message.chat.id,statInfo)
             return
         if '/cancel_' in msgText:
             try:
@@ -408,7 +411,7 @@ async def onmessage(message, bot):
             url = msgText
             await ddl(message,bot,progress_message,url,file_name='',thread=thread,jdb=jdb)
         else:
-            bot.editMessageText(message,'😵No se pudo procesar😵')
+            await message.edit_text('😵No se pudo procesar😵')
     except Exception as ex:
            print(str(ex))
 
