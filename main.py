@@ -402,9 +402,9 @@ async def onmessage(message, bot):
         thread.store('msg',progress_message)
 
         if '/start' in msgText:
-            start_msg = 'Bot          : TGUploaderPro v7.0 Fixed\n'
-            start_msg+= 'Desarrollador: @obisoftdevel\n'
-            start_msg+= 'Api          : https://github.com/ObisoftDev/tguploaderpro\n'
+            start_msg = 'Bot          : CarlosBOtfix\n'
+            start_msg+= 'Desarrollador: @Nanatsu2370\n'
+            start_msg+= '\n'
             start_msg+= 'Uso          :Envia Enlaces De Descarga y Archivos Para Procesar (Configure Antes De Empezar , Vea El /tutorial)\n'
             await progress_message.edit_text(start_msg)
         elif 'http' in msgText:
